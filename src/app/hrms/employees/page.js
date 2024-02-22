@@ -1,11 +1,13 @@
 "use client";
-import React from "react";
+import React ,{useState,useEffect} from "react";
 import { Table, Breadcrumb } from "antd";
 import Image from "next/image";
 import Link from "next/link";
 import Plus from "../../../../public/assets/homeicons/Union.svg";
 import { useRouter } from "next/navigation";
 import Avatar from "@/../public/assets/empDetails/Avatar1.svg";
+// import axios from 'axios'
+import axios from "@/api/axios"
 
 const page = () => {
   const router = useRouter();
@@ -16,11 +18,11 @@ const page = () => {
     // },
     {
       title: "Employee Name",
-      dataIndex: "name",
+      dataIndex: "employee_name",
     },
     {
       title: "Employee ID",
-      dataIndex: "empId",
+      dataIndex: "employee_id",
       sorter: {
         compare: (a, b) => a.empId - b.empId,
         multiple: 3,
@@ -36,7 +38,7 @@ const page = () => {
     },
     {
       title: "Designation",
-      dataIndex: "english",
+      dataIndex: "designation",
       sorter: {
         compare: (a, b) => a.english - b.english,
         multiple: 1,
@@ -44,7 +46,15 @@ const page = () => {
     },
     {
       title: "Employee type",
-      dataIndex: "english",
+      dataIndex: "employee_type",
+      sorter: {
+        compare: (a, b) => a.english - b.english,
+        multiple: 1,
+      },
+    },
+    {
+      title: "Department",
+      dataIndex: "department",
       sorter: {
         compare: (a, b) => a.english - b.english,
         multiple: 1,
@@ -52,148 +62,44 @@ const page = () => {
     },
     {
       title: "Start Date",
-      dataIndex: "english",
+      dataIndex: "start_date",
       sorter: {
         compare: (a, b) => a.english - b.english,
         multiple: 1,
       },
     },
   ];
-  const data = [
-    {
-      key: "1",
-      name: (
-        <Link
-          href="/hrms/employees/employeesOverView"
-          className="flex gap-2 items-center text-black"
-        >
-          <Image src={Avatar} />
-          John Brown
-        </Link>
-      ),
-      empId: 60,
-      email: "email@gmail.com",
-      english: 70,
-    },
-    {
-      key: "2",
-
-      name: (
-        <Link
-          href="/hrms/employees/employeesOverView"
-          className="flex gap-2 items-center text-black"
-        >
-          <Image src={Avatar} />
-          John Brown
-        </Link>
-      ),
-      empId: 55,
-      email: "email@gmail.com",
-      english: 89,
-    },
-    {
-      key: "3",
-
-      name: (
-        <Link
-          href="/hrms/employees/employeesOverView"
-          className="flex gap-2 items-center text-black"
-        >
-          <Image src={Avatar} />
-          John Brown
-        </Link>
-      ),
-      empId: "1545454",
-      email: "email@gmail.com",
-      english: 70,
-    },
-    {
-      key: "4",
-
-      name: (
-        <Link
-          href="/hrms/employees/employeesOverView"
-          className="flex gap-2 items-center  text-black"
-        >
-          <Image src={Avatar} />
-          John Brown
-        </Link>
-      ),
-      empId: 123526,
-      email: "email@gmail.com",
-      english: 89,
-    },
-
-    {
-      key: "1",
-
-      name: (
-        <Link
-          href="/hrms/employees/employeesOverView"
-          className="flex gap-2 items-center text-black"
-        >
-          <Image src={Avatar} />
-          John Brown
-        </Link>
-      ),
-      empId: 143414,
-      email: "email@gmail.com",
-      english: 70,
-    },
-    {
-      key: "2",
-
-      name: (
-        <Link
-          href="/hrms/employees/employeesOverView"
-          className="flex gap-2 items-center text-black"
-        >
-          <Image src={Avatar} />
-          John Brown
-        </Link>
-      ),
-      empId: 2421432,
-      email: "email@gmail.com",
-      english: 89,
-    },
-    {
-      key: "3",
-
-      name: (
-        <Link
-          href="/hrms/employees/employeesOverView"
-          className="flex gap-2 items-center text-black"
-        >
-          <Image src={Avatar} />
-          John Brown
-        </Link>
-      ),
-      empId: 3242,
-      email: "email@gmail.com",
-      english: 70,
-    },
-    {
-      key: "4",
-
-      name: (
-        <Link
-          href="/hrms/employees/employeesOverView"
-          className="flex gap-2 items-center text-black"
-        >
-          <Image src={Avatar} />
-          John Brown
-        </Link>
-      ),
-      empId: 233244,
-      email: "email@gmail.com",
-      english: 89,
-    },
-  ];
-  const onChange = (pagination, filters, sorter, extra) => {
+ const onChange = (pagination, filters, sorter, extra) => {
     console.log("params", pagination, filters, sorter, extra);
     router.push("/hrms/employees/employeesOverView");
   };
 
+
+ const [employees, setEmployees] = useState([])
+  
+
+
+  useEffect(()=>{
+    const fetchData = async ()=>{
+      try{
+        const values = await axios.get('/employee?page=1');
+        console.log("response",values.data.employees)
+        setEmployees(values.data.employees);
+        // console.log("data",employees)
+
+      }
+      catch(error){
+        console.log('error',error);
+      }
+    }
+    fetchData()
+  },[])
+ 
+  const stylestable = {
+    width: "100%",
+    borderCollapse: "collapse",
+    padding: "0",
+  }
   return (
     <div>
       <div className="flex justify-between p-4">
@@ -217,11 +123,55 @@ const page = () => {
           </button>
         </Link>
       </div>
-      {/* <Link href={"/employeesOverView"}> */}
-      <Table columns={columns} dataSource={data} onChange={onChange} />
-      {/* </Link> */}
+      <Link href={"/employeesOverView"}> 
+       <Table className="!m-1 !p-0"  columns={columns} dataSource={employees} style={stylestable}
+  rowClassName="table-row"
+  onChange={onChange} /> 
+
+       </Link>
+      {/* <ul>
+        {(employees.length > 0) ? (employees.map((emp)=>{
+          return <li key={emp.employee_id}>{emp.employee_name}</li>
+        })): (<li>loading</li>)}
+      </ul> */}
+      {/* <table>
+        <thead>
+          <tr>
+            <th>Employee Name</th>
+            <th>Employee Id</th>
+            <th>Project</th>
+            <th>Email Address</th>
+            <th>Designation</th>
+            <th>Employee Type</th>
+            <th>Department</th>
+            <th>Start Date</th>
+          </tr>
+          <tbody>
+            {(employees.length > 0) ? (employees.map((emp) => (
+              <tr key={emp.employee_id}>
+                <td>{emp.employee_name}</td>
+                <td>{emp.employee_id}</td>
+                <td>appkube</td>
+                <td>{emp.email}</td>
+                <td>{emp.designation}</td>
+                <td>{emp.employee_type}</td>
+                <td>{emp.department}</td>
+                <td>{emp.start_date}</td>
+              </tr>
+            ))) : (<h2>...Loading</h2>)}
+          </tbody>
+        </thead>
+      </table>
+       */}
     </div>
   );
 };
+// {
+//   "Employee_Name": "string",
+//   "Employee_Id": "string",
+//   "Email_Address": "string",
+//   "Designation": "string",
+//   "Employee_Type": "string",
+//   "Department": "string",
 
 export default page;
