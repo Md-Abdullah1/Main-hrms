@@ -1,30 +1,31 @@
 "use client";
 import React, { useState, useRef, useEffect } from "react";
-import { Button, Form, Input, Row, Col, Select, Radio } from "antd";
-import { useDispatch, useSelector } from "react-redux";
-import personalDetails, {
-  setpersonalDetails,
-} from "@/redux/slices/personalDetails";
+import { Button, Form, Input, Row, Col, Select, Radio, DatePicker } from "antd";
+// import { useDispatch, useSelector } from "react-redux";
+// import personalDetails, {
+//   setpersonalDetails,
+// } from "@/redux/slices/personalDetails";
 import { useRouter } from "next/navigation";
-
+import axios from "@/api/axios";
+// import axios from "axios";
 const { Option } = Select;
 
-const PersonalInformation = ({ tab, setTab }) => {
+const PersonalInformation = () => {
   const router = useRouter();
-  const dispatch = useDispatch();
-  const [form] = Form.useForm();
-  const Details = useSelector((state) => state.personalDetails) || {};
+  // const dispatch = useDispatch();
+  // const [form] = Form.useForm();
+  // const Details = useSelector((state) => state.personalDetails) || {};
 
-  useEffect(() => {
-    if (Details) {
-      form.setFieldsValue(personalDetails);
-    }
-  }, [Details, form]);
+  // useEffect(() => {
+  //   if (Details) {
+  //     form.setFieldsValue(personalDetails);
+  //   }
+  // }, [Details, form]);
 
   const onFinish = (values) => {
     console.log("Success:", values);
-    dispatch(setpersonalDetails(values));
-    localStorage.setItem("formData", JSON.stringify(values));
+    // dispatch(setpersonalDetails(values));
+    // localStorage.setItem("formData", JSON.stringify(values));
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -34,97 +35,86 @@ const PersonalInformation = ({ tab, setTab }) => {
   const [image, setImage] = useState(null);
   const hiddenFileInput = useRef(null);
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    const imgname = event.target.files[0].name;
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = (e) => {
-      const img = new Image();
-      img.src = e.target.result;
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const maxWidth = 100; // Specify the maximum width here
-        const maxHeight = 100; // Specify the maximum height here
-        let width = img.width;
-        let height = img.height;
+  const handleImageChange = (event) => {};
 
-        // Calculate new dimensions while maintaining aspect ratio
-        if (width > height) {
-          if (width > maxWidth) {
-            height *= maxWidth / width;
-            width = maxWidth;
-          }
-        } else {
-          if (height > maxHeight) {
-            width *= maxHeight / height;
-            height = maxHeight;
-          }
-        }
+  const nextStore = async (values) => {
+    // const myHeaders = new Headers();
+    // myHeaders.append("Content-Type", "application/json");
+    // myHeaders.append("Accept", "application/json");
 
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx.drawImage(img, 0, 0, width, height);
+    const data = JSON.stringify({
+      first_name: values.first_name,
+      last_name: values.last_name,
+      email: values.email,
+      work_email: values.work_email,
+      gender: values.gender,
+      dob: values.dob,
+      number: values.number,
+      emergency_number: values.emergency_number,
+      highest_qualification: values.highest_qualification,
+      address_line_1: values.address_line_1,
+      address_line_2: values.address_line_2,
+      landmark: values.landmark,
+      country: values.country,
+      state: values.state,
+      city: values.city,
+      zipcode: values.zipcode,
+      emp_type: 1,
+    });
+    try {
+      console.log("data", data.emp_type);
+      const response = await axios.post("/employee/personalInfo", data);
+      console.log("response", response);
+    } catch (error) {
+      console.log("error", error);
+    }
 
-        canvas.toBlob(
-          (blob) => {
-            const file = new File([blob], imgname, {
-              type: "image/png",
-              lastModified: Date.now(),
-            });
-            setImage(file);
-          },
-          "image/jpeg",
-          0.8
-        );
-      };
-    };
+    // const requestOptions = {
+    //   method: "POST",
+    //   headers: myHeaders,
+    //   body: data,
+    //   redirect: "follow",
+    // };
+    // console.log('values',values)
+
+    // await fetch(
+    //   "https://bwppdwpoab.execute-api.us-east-1.amazonaws.com/dev/employee/personalInfo",
+    //   requestOptions
+    // )
+    //   .then((response) => response.text())
+    //   .then((result) => console.log(result))
+    //   .catch((error) => console.error(error));
+    //     console.log("success", values);
+    //     axios.post('/employee/personalInfo',values  )
+    //     .then((res) => {
+    //       console.log(res);
+    // router.push("/employee/personalDetails");
+    //     })
+    //  .catch((err) => {
+    //       console.log("error",err);
+    //     });
+    // dispatch(addPersonalDetails(values));
   };
 
+  //   const axios = require('axios');
+
+  // .catch((error) => {
+  //   console.log(error);
+  // });
+
   return (
-    <div className="flex items-start justify-start w-full gap-9 px-9 py-6">
+    <div style={{ display: "flex", justifyContent: "center", gap: "100px" }}>
       {/* "Choose an image" section */}
-      <div className="image-upload-container flex justify-center items-center ">
+      <div className="image-upload-container">
         <div
-          className="flex flex-col justify-center items-center"
-          style={{ border: "2px dashed gray ", padding: "12px" }}
+          style={{
+            border: "2px dashed gray ",
+            padding: "12px",
+            height: "20vh",
+            width: "8vw",
+          }}
         >
-          <label
-            htmlFor="image-upload-input"
-            className="image-upload-label text-center"
-          >
-            {image ? image.name : "Choose an image"}
-          </label>
-          <div
-            className="flex justify-center items-center  "
-            htmlFor="image-upload-input"
-            style={{ cursor: "pointer" }}
-          >
-            {image ? (
-              <img
-                src={URL.createObjectURL(image)}
-                alt="upload image"
-                className="img-display-after image-upload-label"
-                style={{ width: "100px", height: "100px" }}
-              />
-            ) : (
-              <div className="flex justify-center items-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width={60}
-                  height={60}
-                  style={{
-                    justifyContent: "center",
-                    width: "40px",
-                    height: "40px",
-                  }}
-                  viewBox="0 0 512 512"
-                >
-                  <path d="M149.1 64.8L138.7 96H64C28.7 96 0 124.7 0 160V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H373.3L362.9 64.8C356.4 45.2 338.1 32 317.4 32H194.6c-20.7 0-39 13.2-45.5 32.8zM256 192a96 96 0 1 1 0 192 96 96 0 1 1 0-192z" />
-                </svg>
-              </div>
-            )}
+          <div style={{ cursor: "pointer" }}>
             <input
               id="image-upload-input"
               type="file"
@@ -132,37 +122,68 @@ const PersonalInformation = ({ tab, setTab }) => {
               ref={hiddenFileInput}
               style={{ display: "none" }}
             />
+            {image ? (
+              <img
+                src={URL.createObjectURL(image)}
+                alt="upload image"
+                className="img-display-after"
+                style={{ width: "100px", height: "116px" }}
+              />
+            ) : (
+              <div className="flex justify-center mt-7">
+                <label htmlFor="image-upload-input">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width={60}
+                    height={60}
+                    style={{
+                      marginRight: "16px",
+                      justifyContent: "center",
+                      width: "40px",
+                      height: "40px",
+                      cursor: "pointer",
+                    }}
+                    viewBox="0 0 512 512"
+                  >
+                    <path d="M149.1 64.8L138.7 96H64C28.7 96 0 124.7 0 160V416c0 35.3 28.7 64 64 64H448c35.3 0 64-28.7 64-64V160c0-35.3-28.7-64-64-64H373.3L362.9 64.8C356.4 45.2 338.1 32 317.4 32H194.6c-20.7 0-39 13.2-45.5 32.8zM256 192a96 96 0 1 1 0 192 96 96 0 1 1 0-192z" />
+                  </svg>
+                </label>
+              </div>
+            )}
           </div>
+
+          <input
+            id="image-upload-input"
+            type="file"
+            onChange={handleImageChange}
+            ref={hiddenFileInput}
+            style={{ display: "none" }}
+          />
         </div>
       </div>
 
       {/* Form */}
       <Form
-        className="w-full"
+        requiredMark={false}
         name="basic"
-        labelCol={
-          {
-            // span: 10,
-          }
-        }
-        wrapperCol={
-          {
-            // span: 18,
-          }
-        }
-        style={{}}
-        initialValues={{
-          remember: true,
+        labelCol={{
+          span: 6,
         }}
-        onFinish={onFinish}
-        onFinishFailed={onFinishFailed}
+        labelWrap
+        style={{ text: "start" }}
+        onFinish={nextStore}
+        // wrapperCol={{
+        //   span: 18,
+        // }}
+        labelAlign="left"
+        className="w-[55%] text-start "
         autoComplete="off"
       >
-        <Row className="w-full " gutter={0}>
+        <Row gutter={20}>
           <Col span={12}>
             <Form.Item
               label="First Name"
-              name="First Name"
+              name="first_name"
               rules={[
                 {
                   pattern: /^[A-Za-z]+$/,
@@ -171,13 +192,13 @@ const PersonalInformation = ({ tab, setTab }) => {
                 },
               ]}
             >
-              <Input />
+              <Input className="rounded-none" placeholder="First Name" />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               label="Last Name"
-              name="Last Name"
+              name="last_name"
               rules={[
                 {
                   required: true,
@@ -185,85 +206,81 @@ const PersonalInformation = ({ tab, setTab }) => {
                 },
               ]}
             >
-              <Input />
+              <Input className="rounded-none" placeholder="Last Name" />
             </Form.Item>
           </Col>
         </Row>
-        <Col span={24}>
+        <Col span="3xl">
           <Form.Item
             label="Email Address"
-            name="Email Address"
-            // style={{width:600}}
+            name="email"
+            labelCol={{
+              span: 3,
+            }}
             rules={[
               {
                 required: true,
                 pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-
-                message: "Please input your Email Address!",
-              },
-            ]}
-          >
-            <Input />
-          </Form.Item>
-        </Col>
-        <Col span={24}>
-          <Form.Item
-            label="Work Email"
-            name="Work Email"
-            rules={[
-              {
-                required: true,
                 message: "Please input your Work Email Address!",
               },
             ]}
           >
-            <Input />
+            <Input
+              className="rounded-none"
+              placeholder="Enter Your Email Address"
+            />
           </Form.Item>
         </Col>
-        <Row gutter={0}>
-          <Col span={12}>
-            <Form.Item
-              label="Employee ID"
-              name="Employee ID"
-              rules={[
-                {
-                  required: true,
-                  pattern: /^[A-Za-z0-9]{6,}$/,
-                  message: "Please input your Employee ID!",
-                },
-              ]}
-            >
-              <Input />
-            </Form.Item>
-          </Col>
-          <Col className="w-1/2 gap-4">
+        <Col span="3xl">
+          <Form.Item
+            label="Work Email"
+            labelCol={{
+              span: 3,
+            }}
+            name="work_email"
+            rules={[
+              {
+                required: true,
+                pattern: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+                message: "Please input your Work Email Address!",
+              },
+            ]}
+          >
+            <Input
+              className="rounded-none"
+              placeholder="Enter Your Work Email Address"
+            />
+          </Form.Item>
+        </Col>
+
+        <div className="">
+          <Row>
             <Form.Item
               label="Gender"
-              name="Gender"
-              style={{ marginBottom: 0, marginLeft: "5px" }}
+              name="gender"
+              style={{ marginBottom: 0 }}
+              rules={[{ required: true }]}
             >
               <Radio.Group
-                style={{ display: "flex", flexDirection: "row" }}
-                className="justify-center gap-4"
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  marginLeft: "32px",
+                }}
               >
-                <Radio.Button className="w-full" value="small">
-                  Male
-                </Radio.Button>
-                <Radio.Button className="w-full" value="default">
-                  Female
-                </Radio.Button>
-                <Radio.Button className="w-full" value="large">
-                  Other
-                </Radio.Button>
+                <Radio.Button value="Male">Male</Radio.Button>
+                <Radio.Button value="Female">Female</Radio.Button>
+                <Radio.Button value="Other">Other</Radio.Button>
               </Radio.Group>
             </Form.Item>
-          </Col>
-        </Row>{" "}
-        <Row gutter={0}>
+          </Row>{" "}
+          <br></br>{" "}
+        </div>
+        <Row gutter={20}>
           <Col span={12}>
             <Form.Item
               label="Contact no"
-              name="Contact no"
+              name="number"
               rules={[
                 {
                   required: true,
@@ -272,13 +289,17 @@ const PersonalInformation = ({ tab, setTab }) => {
                 },
               ]}
             >
-              <Input />
+              <Input
+                className="rounded-none"
+                placeholder="Enter Your Contact No."
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              label="Emergency Contact no"
-              name="Emergency Contact no"
+              label="Emergency Contact no :"
+              name="emergency_number"
+              colon={false}
               rules={[
                 {
                   required: true,
@@ -287,15 +308,45 @@ const PersonalInformation = ({ tab, setTab }) => {
                 },
               ]}
             >
-              <Input />
+              <Input className="rounded-none" placeholder="Emergency No." />
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={0}>
+        <Row gutter={20}>
+          <Col span={12}>
+            <Form.Item
+              label="Qualification"
+              name="highest_qualification"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Qualification!",
+                },
+              ]}
+            >
+              <Input className="rounded-none" placeholder="BCA" />
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <Form.Item
+              label="Date of Birth"
+              name="dob"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your Date of Birth!",
+                },
+              ]}
+            >
+              <DatePicker className="rounded-none w-[100%]" />
+            </Form.Item>
+          </Col>
+        </Row>
+        <Row gutter={20}>
           <Col span={12}>
             <Form.Item
               label="Address line 1"
-              name="Address line 1"
+              name="address_line_1"
               rules={[
                 {
                   required: true,
@@ -303,13 +354,16 @@ const PersonalInformation = ({ tab, setTab }) => {
                 },
               ]}
             >
-              <Input />
+              <Input
+                className="rounded-none"
+                placeholder="Enter Your Address"
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
               label="Address line 2"
-              name="Address line 2"
+              name="address_line_2"
               rules={[
                 {
                   required: true,
@@ -317,15 +371,18 @@ const PersonalInformation = ({ tab, setTab }) => {
                 },
               ]}
             >
-              <Input />
+              <Input
+                className="rounded-none"
+                placeholder="Enter Your Address"
+              />
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={0}>
+        <Row gutter={20}>
           <Col span={12}>
             <Form.Item
               label="Landmark"
-              name="Landmark"
+              name="landmark"
               rules={[
                 {
                   required: true,
@@ -333,25 +390,32 @@ const PersonalInformation = ({ tab, setTab }) => {
                 },
               ]}
             >
-              <Input />
+              <Input
+                className="rounded-none"
+                placeholder="Enter Your Landmark"
+              />
             </Form.Item>
           </Col>
           <Col span={12}>
             <Form.Item
-              label="Country"
-              name="Country"
+              label="Select Country"
+              name="country"
               rules={[
                 {
                   required: true,
-                  message: "Please input your Country!",
+                  message: "Please Select Your Country!",
                 },
               ]}
             >
-              <Input />
+              <Select placeholder="Select Your Country">
+                <Option value="option1">Option 1</Option>
+                <Option value="option2">Option 2</Option>
+                <Option value="option3">Option 3</Option>
+              </Select>
             </Form.Item>
           </Col>
         </Row>
-        <Row gutter={0}>
+        <Row gutter={20}>
           <Col span={12}>
             <Form.Item
               label="State"
@@ -363,7 +427,7 @@ const PersonalInformation = ({ tab, setTab }) => {
                 },
               ]}
             >
-              <Select placeholder="Please select">
+              <Select placeholder="Select State">
                 <Option value="option1">Option 1</Option>
                 <Option value="option2">Option 2</Option>
                 <Option value="option3">Option 3</Option>
@@ -382,7 +446,7 @@ const PersonalInformation = ({ tab, setTab }) => {
                 },
               ]}
             >
-              <Select placeholder="Please select">
+              <Select placeholder="Select City">
                 <Option value="option1">Option 1</Option>
                 <Option value="option2">Option 2</Option>
                 <Option value="option3">Option 3</Option>
@@ -390,54 +454,45 @@ const PersonalInformation = ({ tab, setTab }) => {
             </Form.Item>
           </Col>
         </Row>
+
         <Col span={12}>
           <Form.Item
             label="Zip Code"
-            name="Zip Code"
+            name="zipcode"
             rules={[
               {
-                pattern: /^\d{5}-\d{4}$/,
                 required: true,
-                message: "Please input your password!",
+                message: "Please input your Zip code!",
               },
             ]}
           >
-            <Input />
+            <Input className="rounded-none" placeholder="Enter Your Zip Code" />
           </Form.Item>
         </Col>
-        <Form.Item
-          wrapperCol={
-            {
-              // offset: 2,
-            }
-          }
-          style={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            // backgroundColor: "blue",
-            // flexWrap: "wrap",
-          }}
-        >
-          <Button
-            onClick={() => {
-              setTab(tab+1)
-            }}
-              // router.push("/employees/addemp/profdetails");
-            block
-            // htmlType="submit"
-            type="primary"
-            style={{
-              width: "30vw",
-              color: "white",
-              backgroundColor: "#1890FF",
-              height: "100%",
-              borderRadius: "5px",
-            }}
-          >
+
+        <div className="w-full flex justify-center h-[40px] ">
+          {/* <Button
+        onClick={() => {
+          setTab(tab + 1);
+        }}
+        // router.push("/employees/addemp/profdetails");
+        block
+        // htmlType="submit"
+        type="primary"
+        style={{
+          width: "30vw",
+          color: "white",
+          backgroundColor: "#1890FF",
+          height: "100%",
+          borderRadius: "5px",
+        }}
+      >
+        Next
+      </Button> */}
+          <button className="bg-[#1890ff] w-[418px] text-white h-full rounded-none">
             Next
-          </Button>
-        </Form.Item>
+          </button>
+        </div>
       </Form>
     </div>
   );

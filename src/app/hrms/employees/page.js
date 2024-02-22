@@ -82,7 +82,7 @@ const page = () => {
   useEffect(()=>{
     const fetchData = async ()=>{
       try{
-        const values = await axios.get('/employee?page=1');
+        const values = await axios.get('/employee?page=3');
         console.log("response",values.data.employees)
         setEmployees(values.data.employees);
         // console.log("data",employees)
@@ -123,7 +123,7 @@ const page = () => {
           </button>
         </Link>
       </div>
-      <Link href={"/employeesOverView"}> 
+      <Link href={"/hrms/employees/employeesOverView"}> 
        <Table className="!m-1 !p-0"  columns={columns} dataSource={employees} style={stylestable}
   rowClassName="table-row"
   onChange={onChange} /> 
