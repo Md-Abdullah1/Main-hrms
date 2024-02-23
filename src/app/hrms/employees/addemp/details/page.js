@@ -38,7 +38,7 @@ const page = () => {
   ];
   const onChange = (key) => {
     console.log("onchange", key);
-    setActiveTab(key);
+    setActiveTab(parseInt(key));
     console.log("onclickingnext", activeTab);
   };
   return (

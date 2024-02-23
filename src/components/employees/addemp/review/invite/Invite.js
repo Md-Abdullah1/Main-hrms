@@ -64,7 +64,7 @@ const Invite = () => {
         {step === 1 && <Profile1 key={step} step={step} setStep={setStep} />}
         {step === 2 && <Profile2 key={step} step={step} setStep={setStep} />}
         {step === 3 && <Profile3 key={step} step={step} setStep={setStep} />}
-        {step === 4 && <Profile4 key={step} step={step} setStep={setStep} />}
+        {step === 4 && <Profile1 key={step} step={step} setStep={setStep} />}
         {step === 5 && <Profile5 key={step} step={step} setStep={setStep} />}
 
         {/* {rednerComponent()} */}

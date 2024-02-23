@@ -10,7 +10,7 @@ import axios from "@/api/axios";
 // import axios from "axios";
 const { Option } = Select;
 
-const PersonalInformation = () => {
+const PersonalInformation = ({tab,setTab}) => {
   const router = useRouter();
   // const dispatch = useDispatch();
   // const [form] = Form.useForm();
@@ -42,7 +42,7 @@ const PersonalInformation = () => {
     // myHeaders.append("Content-Type", "application/json");
     // myHeaders.append("Accept", "application/json");
 
-    const data = JSON.stringify({
+    const data = {
       first_name: values.first_name,
       last_name: values.last_name,
       email: values.email,
@@ -60,7 +60,8 @@ const PersonalInformation = () => {
       city: values.city,
       zipcode: values.zipcode,
       emp_type: 1,
-    });
+      image: "https://www.udemy.com/logout/#learning-tools",
+    };
     try {
       console.log("data", data.emp_type);
       const response = await axios.post("/employee/personalInfo", data);
@@ -489,7 +490,9 @@ const PersonalInformation = () => {
       >
         Next
       </Button> */}
-          <button className="bg-[#1890ff] w-[418px] text-white h-full rounded-none">
+          <button className="bg-[#1890ff] w-[418px] text-white h-full rounded-none" onClick={()=>{
+            setTab(tab+1)
+          }}>
             Next
           </button>
         </div>

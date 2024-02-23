@@ -22,7 +22,7 @@ const Profile2 = ({ step, setStep }) => {
                 <p className=' text-gray-400'>Invitation</p>
                 <p>Immediately</p>
             </div>
-            <button className='bg-[#1890FF] w-[100%] mb-5 h-9 rounded-sm  ' >Confirm and Continue</button>
+            <button className='bg-[#1890FF] w-[100%] mb-5 h-9 rounded-sm  text-white' >Confirm and Continue</button>
             <p className='mb-5 cursor-pointer text-center' onClick={() => { setStep(step - 1) }} >Back</p>
             {/* </div> */}
         </>
