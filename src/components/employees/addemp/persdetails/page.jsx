@@ -10,7 +10,7 @@ import axios from "@/api/axios";
 // import axios from "axios";
 const { Option } = Select;
 
-const PersonalInformation = ({tab,setTab}) => {
+const  PersonalInformation = ({tab,setTab}) => {
   const router = useRouter();
   // const dispatch = useDispatch();
   // const [form] = Form.useForm();

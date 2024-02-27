@@ -71,7 +71,7 @@ const ProfessionalInfo = ({ tab, setTab }) => {
   
  
 
-  const putting = (values) => {
+  const putting = async (values) => {
     let data = {
       // designation_id: values.selectedDesignation,
       designation_id: 4,
@@ -85,15 +85,13 @@ const ProfessionalInfo = ({ tab, setTab }) => {
       start_date: values.selectedDate,
       emp_id: values.employeeId,
     };
-
-    const response = axios
-      .put("/employee/professionalInfo", data)
-      .then((response) => {
-        console.log("success", response);
-      })
-      .catch((error) => {
+    try{
+      const response = await axios.put("/employee/professionalInfo", data)
+      console.log("success", response);
+    }
+    catch(error){
         console.log("error", error);
-      });
+      };
   };
 
   
